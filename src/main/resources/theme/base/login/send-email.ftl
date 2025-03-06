@@ -1,0 +1,1 @@
+<a href="${magicLink}">Click here to login</a>
