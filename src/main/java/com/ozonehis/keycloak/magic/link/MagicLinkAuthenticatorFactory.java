@@ -1,5 +1,6 @@
 package com.ozonehis.keycloak.magic.link;
 
+import static com.ozonehis.keycloak.magic.link.MagicLink.setupDefaultFlow;
 import java.util.ArrayList;
 import java.util.List;
 import org.keycloak.Config;
@@ -8,7 +9,9 @@ import org.keycloak.authentication.AuthenticatorFactory;
 import org.keycloak.models.AuthenticationExecutionModel.Requirement;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
+import org.keycloak.models.RealmModel;
 import org.keycloak.provider.ProviderConfigProperty;
+import org.keycloak.provider.ProviderEvent;
 
 
 public class MagicLinkAuthenticatorFactory implements AuthenticatorFactory {
@@ -28,6 +31,12 @@ public class MagicLinkAuthenticatorFactory implements AuthenticatorFactory {
 
     @Override
     public void postInit(KeycloakSessionFactory factory) {
+        factory.register(
+                (ProviderEvent ev) -> {
+                    if (ev instanceof RealmModel.RealmPostCreateEvent event) {
+                        setupDefaultFlow(event.getKeycloakSession(), event.getCreatedRealm());
+                    }
+                });
     }
 
     @Override
