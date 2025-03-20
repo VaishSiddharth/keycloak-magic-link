@@ -37,7 +37,7 @@ public class MagicLink {
         flow.setTopLevel(true);
         flow = realm.addAuthenticationFlow(flow);
 
-        realm.setBrowserFlow(flow);
+//        realm.setBrowserFlow(flow);
 
         // cookie
         addExecutionToFlow(
