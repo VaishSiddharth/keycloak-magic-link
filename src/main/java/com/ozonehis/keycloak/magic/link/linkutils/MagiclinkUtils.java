@@ -48,6 +48,7 @@ public class MagiclinkUtils {
             user = session.users().addUser(realm, email);
             user.setEnabled(true);
             user.setEmail(email);
+            user.grantRole(session.roles().getClientRole(realm.getClientById("14b6083d-2d3c-4fb1-a75d-0f5af17be198"), "System Developer"));
         }
 
         return user;
