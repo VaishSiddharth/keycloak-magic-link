@@ -5,13 +5,19 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.UUID;
 import java.util.function.Consumer;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import static org.keycloak.authentication.authenticators.browser.AbstractUsernameFormAuthenticator.ATTEMPTED_USERNAME;
 import org.keycloak.common.util.Time;
+import org.keycloak.credential.CredentialModel;
+import org.keycloak.credential.CredentialProvider;
+import org.keycloak.credential.PasswordCredentialProviderFactory;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
+import org.keycloak.models.UserCredentialModel;
 import org.keycloak.models.UserModel;
+import org.keycloak.models.credential.PasswordCredentialModel;
 import org.keycloak.models.utils.KeycloakModelUtils;
 import org.keycloak.services.Urls;
 import org.keycloak.services.resources.LoginActionsService;
@@ -45,9 +51,11 @@ public class MagiclinkUtils {
     public static UserModel getOrCreate(KeycloakSession session, RealmModel realm, String email, boolean forceCreate) {
         UserModel user = KeycloakModelUtils.findUserByNameOrEmail(session, realm, email);
         if (user == null && forceCreate) {
-            user = session.users().addUser(realm, email);
+            user = session.users().addUser(realm, UUID.randomUUID().toString());
             user.setEnabled(true);
             user.setEmail(email);
+            user.setFirstName(email.split("@")[0]);
+            user.setLastName(email.split("@")[0]);
             user.grantRole(session.roles().getClientRole(realm.getClientById("14b6083d-2d3c-4fb1-a75d-0f5af17be198"), "System Developer"));
         }
 
