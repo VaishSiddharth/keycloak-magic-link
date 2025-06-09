@@ -14,30 +14,37 @@ public class MagicLinkAuthenticator implements Authenticator {
 
     @Override
     public void authenticate(AuthenticationFlowContext context) {
-        UserModel user =
-                MagiclinkUtils.createUser(context.getSession(), context.getRealm());
-
-        String token = MagiclinkUtils.generateMagicLink(context,user);
-
-        // Uncomment if click here page is required
-//        context.challenge(context.form().setAttribute("magicLink", token).createForm("send-email.ftl"));
-
-        try {
-            URI location= new URI(token);
-            context.forceChallenge(Response.seeOther(location).build());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+        // Create user automatically
+        UserModel user = MagiclinkUtils.createUser(context.getSession(), context.getRealm());
+        
+        // Set the user in the context
+        context.setUser(user);
+        
+        // Get the original redirect URI
+        String redirectUri = context.getAuthenticationSession().getRedirectUri();
+        
+        // Complete the authentication
+        context.success();
+        
+        // Redirect back to the client application
+        if (redirectUri != null) {
+            try {
+                context.getSession().getContext().getUri().getRequestUriBuilder()
+                    .replacePath(redirectUri)
+                    .build();
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to redirect to client application", e);
+            }
         }
     }
 
     @Override
     public void action(AuthenticationFlowContext context) {
-        // Handle the magic link verification
+        // No action needed as we're handling everything in authenticate
         context.success();
     }
 
-
-   @Override
+    @Override
     public boolean requiresUser() {
         return false;
     }
