@@ -1,9 +1,5 @@
 package com.ozonehis.keycloak.magic.link;
 
-import com.ozonehis.keycloak.magic.link.linkutils.MagiclinkUtils;
-import jakarta.ws.rs.core.Response;
-import java.net.URI;
-import java.net.URISyntaxException;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.Authenticator;
 import org.keycloak.models.KeycloakSession;
